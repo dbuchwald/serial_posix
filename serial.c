@@ -188,11 +188,11 @@ void serial_close(int fd) {
 }
 
 #define log_mask_state(VARIABLE, FIELD, MASK) \
-    fprintf(stdout, "    " #FIELD ".[%-10s] = [%-9s]\n", #MASK, VARIABLE.FIELD & MASK ? "enabled" : "disabled")
+    fprintf(stdout, "    " #FIELD ".[%-10s] = [%-9s]\n", #MASK, VARIABLE.FIELD & MASK ? "enabled" : "disabled") 
 
 void log_termios(struct termios options) {
     fprintf(stdout, "Termios structure: {\n");
-    fprintf(stdout, "  c_iflag: [%lu] [0x%04lX],\n", options.c_iflag, options.c_iflag);
+    fprintf(stdout, "  c_iflag: [%lu] [0x%04lX],\n", (unsigned long)options.c_iflag, (unsigned long)options.c_iflag);
 
     log_mask_state(options, c_iflag, IGNBRK);
     log_mask_state(options, c_iflag, BRKINT);
@@ -209,12 +209,16 @@ void log_termios(struct termios options) {
     log_mask_state(options, c_iflag, IMAXBEL);
     log_mask_state(options, c_iflag, IUTF8);
 
-    fprintf(stdout, "  c_oflag: [%lu] [0x%04lX],\n", options.c_oflag, options.c_oflag);
+    fprintf(stdout, "  c_oflag: [%lu] [0x%04lX],\n", (unsigned long)options.c_oflag, (unsigned long)options.c_oflag);
 
     log_mask_state(options, c_oflag, OPOST);
     log_mask_state(options, c_oflag, ONLCR);
+#ifdef OXTABS
     log_mask_state(options, c_oflag, OXTABS);
+#endif /* OXTABS */
+#ifdef ONOEOT
     log_mask_state(options, c_oflag, ONOEOT);
+#endif /* ONOEOT */
     log_mask_state(options, c_oflag, OCRNL);
     log_mask_state(options, c_oflag, ONOCR);
     log_mask_state(options, c_oflag, ONLRET);
@@ -227,7 +231,7 @@ void log_termios(struct termios options) {
     log_mask_state(options, c_oflag, VTDLY);
     log_mask_state(options, c_oflag, OFDEL);
 
-    fprintf(stdout, "  c_lflag: [%lu] [0x%04lX],\n", options.c_lflag, options.c_lflag);
+    fprintf(stdout, "  c_lflag: [%lu] [0x%04lX],\n", (unsigned long)options.c_lflag, (unsigned long)options.c_lflag);
 
     log_mask_state(options, c_lflag, ECHOKE);
     log_mask_state(options, c_lflag, ECHOE);
@@ -238,18 +242,24 @@ void log_termios(struct termios options) {
     log_mask_state(options, c_lflag, ECHOCTL);
     log_mask_state(options, c_lflag, ISIG);
     log_mask_state(options, c_lflag, ICANON);
+#ifdef ALTWERASE
     log_mask_state(options, c_lflag, ALTWERASE);
+#endif /* ALTWERASE */
     log_mask_state(options, c_lflag, IEXTEN);
     log_mask_state(options, c_lflag, EXTPROC);
     log_mask_state(options, c_lflag, TOSTOP);
     log_mask_state(options, c_lflag, FLUSHO);
+#ifdef NOKERNINFO
     log_mask_state(options, c_lflag, NOKERNINFO);
+#endif /* NOKERNINFO */
     log_mask_state(options, c_lflag, PENDIN);
     log_mask_state(options, c_lflag, NOFLSH);
 
-    fprintf(stdout, "  c_cflag: [%lu] [0x%04lX],\n", options.c_cflag, options.c_cflag);
+    fprintf(stdout, "  c_cflag: [%lu] [0x%04lX],\n", (unsigned long)options.c_cflag, (unsigned long)options.c_cflag);
 
+#ifdef CIGNORE
     log_mask_state(options, c_cflag, CIGNORE);
+#endif /* CIGNORE */
     log_mask_state(options, c_cflag, CSIZE);
     log_mask_state(options, c_cflag, CS5);
     log_mask_state(options, c_cflag, CS6);
@@ -261,24 +271,36 @@ void log_termios(struct termios options) {
     log_mask_state(options, c_cflag, PARODD);
     log_mask_state(options, c_cflag, HUPCL);
     log_mask_state(options, c_cflag, CLOCAL);
+#ifdef CCTS_OFLOW
     log_mask_state(options, c_cflag, CCTS_OFLOW);
+#endif /* CCTS_OFLOW */
     log_mask_state(options, c_cflag, CRTSCTS);
+#ifdef CRTS_IFLOW
     log_mask_state(options, c_cflag, CRTS_IFLOW);
+#endif /* CRTS_IFLOW */
+#ifdef CDTR_IFLOW
     log_mask_state(options, c_cflag, CDTR_IFLOW);
+#endif /* CDTR_IFLOW */
+#ifdef CDSR_OFLOW
     log_mask_state(options, c_cflag, CDSR_OFLOW);
+#endif /* CDSR_OFLOW */
+#ifdef CCAR_OFLOW
     log_mask_state(options, c_cflag, CCAR_OFLOW);
+#endif /* CCAR_OFLOW */
+#ifdef MDMBUF
     log_mask_state(options, c_cflag, MDMBUF);
+#endif /* MDMBUF */
 
     fprintf(stdout, "  c_cc: {\n");
     for (int i=0; i<NCCS; i++) {
-        fprintf(stdout, "    [%02d] = [0x%02X]", i, options.c_cc[i]);
+        fprintf(stdout, "    [%02d] = [0x%02X]", i, (unsigned char)options.c_cc[i]);
         if (i==NCCS-1) {
             fprintf(stdout, "}\n");
         } else {
             fprintf(stdout, ",\n");
         }
     }
-    fprintf(stdout, "  c_ispeed: [%lu],\n", options.c_ispeed);
-    fprintf(stdout, "  c_ospeed: [%lu] }\n", options.c_ospeed);
+    fprintf(stdout, "  c_ispeed: [%lu],\n", (unsigned long)options.c_ispeed);
+    fprintf(stdout, "  c_ospeed: [%lu] }\n", (unsigned long)options.c_ospeed);
 
 }
